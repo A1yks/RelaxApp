@@ -1,19 +1,26 @@
+import Button from '@components/ui/Button';
 import React, { FC } from 'react';
-import { ImageRequireSource } from 'react-native';
+import { ImageRequireSource, StyleProp, Text } from 'react-native';
 import { Image, StyleSheet, View, ViewStyle } from 'react-native';
 
 interface Props {
     title: string;
     description: string;
     image: ImageRequireSource;
-    style?: ViewStyle;
+    style?: StyleProp<ViewStyle>;
 }
 
 const Block: FC<Props> = (props) => {
     return (
         <View style={[styles.container, props.style]}>
-            <View></View>
-            <Image source={props.image} />
+            <View>
+                <Text style={[styles.text, styles.title]}>{props.title}</Text>
+                <Text style={styles.text}>{props.description}</Text>
+                <Button style={styles.button} textStyle={[styles.text, styles.buttonText]}>
+                    Подробнее
+                </Button>
+            </View>
+            <Image source={props.image} style={styles.image} />
         </View>
     );
 };
@@ -25,6 +32,29 @@ const styles = StyleSheet.create({
         width: '100%',
         paddingHorizontal: 30,
         paddingVertical: 22,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 25,
+        color: '#253334',
+    },
+    image: {
+        position: 'absolute',
+        right: 5,
+    },
+    text: {
+        fontSize: 15,
+        fontWeight: '500',
+        color: '#000',
+    },
+    button: {
+        width: 138,
+        backgroundColor: '#253334',
+        marginTop: 16,
+    },
+    buttonText: {
+        color: '#fff',
     },
 });
 

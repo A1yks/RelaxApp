@@ -1,16 +1,18 @@
 import React, { FC } from 'react';
-import { ButtonProps, Text, StyleSheet, TouchableNativeFeedback, View } from 'react-native';
+import { ButtonProps, Text, StyleSheet, TouchableNativeFeedback, View, ViewStyle, TextStyle, StyleProp } from 'react-native';
 
 interface Props {
     onPress?: ButtonProps['onPress'];
     children: string;
+    style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
 }
 
 const Button: FC<Props> = (props) => {
     return (
         <TouchableNativeFeedback onPress={props.onPress}>
-            <View style={styles.button}>
-                <Text style={styles.text}>{props.children}</Text>
+            <View style={[styles.button, props.style]}>
+                <Text style={[styles.text, props.textStyle]}>{props.children}</Text>
             </View>
         </TouchableNativeFeedback>
     );

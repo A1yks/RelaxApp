@@ -6,9 +6,23 @@
             {
                 "extensions": [".js", ".jsx", ".ts", ".tsx", ".android.js", ".android.tsx", ".ios.js", ".ios.tsx"],
                 "alias": {
-                    "@images": "./src/images"
+                    "@images": "./src/images",
+                    "@components": "./src/components"
                 },
                 "root": ["./src"]
+            }
+        ],
+        [
+            "module:react-native-dotenv",
+            {
+                "envName": "APP_ENV",
+                "moduleName": "@env",
+                "path": ".env",
+                "blocklist": null,
+                "allowlist": null,
+                "safe": false,
+                "allowUndefined": true,
+                "verbose": false
             }
         ]
     ]

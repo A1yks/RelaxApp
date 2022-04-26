@@ -1,0 +1,25 @@
+{
+    "name": "relax-app-api",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.ts",
+    "scripts": {
+        "dev": "nodemon --watch . --ext \"ts,json\" --exec \"ts-node --files server.ts\""
+    },
+    "author": "Alyks",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.0.1",
+        "express": "^4.18.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^6.3.1"
+    },
+    "devDependencies": {
+        "@types/bcrypt": "^5.0.0",
+        "@types/express": "^4.17.13",
+        "@types/jsonwebtoken": "^8.5.8",
+        "dotenv": "^16.0.0",
+        "nodemon": "^2.0.15",
+        "ts-node": "^10.7.0"
+    }
+}

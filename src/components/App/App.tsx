@@ -14,8 +14,7 @@ const App: FC = () => {
     return (
         <NavigationContainer>
             <StatusBar backgroundColor="#7C9A92" />
-            {/* <StackNavigator /> */}
-            <TabsNavigator />
+            <StackNavigator />
         </NavigationContainer>
     );
 };

@@ -1,15 +1,14 @@
 import VectorDrawable from '@klarna/react-native-vector-drawable';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import useOpenPage from 'hooks/useOpenPage';
 import React, { FC } from 'react';
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { StackPages } from '../../navigation/StackNavigator/types';
 import Button from '../../ui/Button';
 import TextLink from '../../ui/TextLink';
 
-const Onboarding: FC<NativeStackHeaderProps> = (props) => {
-    function openPage(page: StackPages) {
-        return () => props.navigation.navigate(page);
-    }
+const Onboarding: FC = () => {
+    const openPage = useOpenPage();
 
     return (
         <ImageBackground source={{ uri: 'onboarding_bg' }} style={styles.container}>

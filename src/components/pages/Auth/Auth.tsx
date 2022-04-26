@@ -1,12 +1,13 @@
 import VectorDrawable from '@klarna/react-native-vector-drawable';
 import React, { FC } from 'react';
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { pageTexts } from '.';
+import { pageTexts } from './';
 import useOpenPage from '../../../hooks/useOpenPage';
 import { StackPages } from '../../navigation/StackNavigator/types';
 import Button from '../../ui/Button';
 import TextLink from '../../ui/TextLink';
 import { PageVariant } from './types';
+import useAuth from './hooks/useAuth';
 
 interface Props {
     variant: PageVariant;
@@ -16,8 +17,7 @@ const Auth: FC<Props> = (props) => {
     const texts = pageTexts[props.variant];
     const isRegisterPage = props.variant === 'register';
     const openPage = useOpenPage();
-
-    function pressHandler() {}
+    const { authHandler, emailChangeHandler, nameChangeHandler, passwordChangeHandler, loading } = useAuth({ isRegister: isRegisterPage });
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
@@ -25,12 +25,21 @@ const Auth: FC<Props> = (props) => {
                 <VectorDrawable resourceName="logo" style={styles.logo} />
                 <Text style={[styles.text, styles.pageText]}>{texts.page}</Text>
                 <View style={styles.inputWrapper}>
-                    {isRegisterPage && <TextInput placeholderTextColor="#BEC2C2" style={styles.input} placeholder="Имя" textContentType="name" />}
+                    {isRegisterPage && (
+                        <TextInput
+                            placeholderTextColor="#BEC2C2"
+                            style={styles.input}
+                            placeholder="Имя"
+                            textContentType="name"
+                            onChangeText={nameChangeHandler}
+                        />
+                    )}
                     <TextInput
                         placeholderTextColor="#BEC2C2"
                         style={[styles.input, isRegisterPage && styles.inputMt]}
                         placeholder="Email адрес"
                         textContentType="emailAddress"
+                        onChangeText={emailChangeHandler}
                     />
                     <TextInput
                         placeholderTextColor="#BEC2C2"
@@ -39,10 +48,11 @@ const Auth: FC<Props> = (props) => {
                         textContentType="newPassword"
                         autoComplete={isRegisterPage ? 'password-new' : 'password'}
                         secureTextEntry
+                        onChangeText={passwordChangeHandler}
                     />
                 </View>
                 <View style={styles.buttonWrapper}>
-                    <Button onPress={pressHandler}>{texts.buttonText}</Button>
+                    <Button onPress={authHandler}>{texts.buttonText}</Button>
                     <View style={styles.bottomTextWrapper}>
                         <Text style={[styles.text, styles.bottomText]}>{texts.bottomText} </Text>
                         <TextLink
@@ -54,7 +64,7 @@ const Auth: FC<Props> = (props) => {
                     </View>
                 </View>
             </View>
-            <Image source={require('../../../images/leaves.png')} style={styles.bottomImg} />
+            <Image source={require('@images/leaves.png')} style={styles.bottomImg} />
         </ScrollView>
     );
 };
