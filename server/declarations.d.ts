@@ -7,10 +7,17 @@ declare global {
             data?: T;
         }
 
-        export interface Request<T = any> extends express.Request {
-            body: T;
+        export interface Request<Body = any, Params = any> extends express.Request<Params> {
+            body: Body;
         }
 
         export interface Response<T = any> extends express.Response<ResponseBody<T>> {}
+    }
+
+    namespace Services {
+        export interface Error {
+            status: number;
+            error: string;
+        }
     }
 }

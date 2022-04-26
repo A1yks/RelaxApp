@@ -1,10 +1,10 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../../models/User';
-import { LoginError, Token } from './types';
+import { Token } from './types';
 
 class AuthService {
-    async login(email: string, password: string): Promise<Token | LoginError> {
+    async login(email: string, password: string): Promise<Token | Services.Error> {
         const user = await User.findOne({ email });
 
         if (!user) return { status: 400, error: 'Пользователь с таким email не существует' };

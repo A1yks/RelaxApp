@@ -1,5 +1,6 @@
 import AuthService from '../../services/auth/AuthService';
-import { isLoginError, LoginError } from '../../services/auth/types';
+import { isServiceError } from '../../types';
+import { isValidEmail } from '../../utils/isValidEmail';
 import { LoginBody, RegisterBody } from './types';
 
 class AuthController {
@@ -13,7 +14,7 @@ class AuthController {
         try {
             const result = await AuthService.login(email, password);
 
-            if (isLoginError(result)) {
+            if (isServiceError(result)) {
                 return res.status(result.status).json({ error: result.error });
             }
 
@@ -34,7 +35,7 @@ class AuthController {
             return res.status(400).json({ error: 'Длина пароля должна быть больше 6 символов' });
         }
 
-        if (!/.+?@.+?\..+/.test(email)) {
+        if (!isValidEmail(email)) {
             return res.status(400).json({ error: 'Почта указана в неверном формате' });
         }
 
