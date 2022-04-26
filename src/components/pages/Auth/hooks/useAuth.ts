@@ -5,6 +5,7 @@ import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import { API_URL } from '@env';
 import { Alert } from 'react-native';
 import { Response } from './types';
+import { PageVariant } from '../types';
 
 interface Params {
     isRegister: boolean;
@@ -17,24 +18,31 @@ function useAuth({ isRegister }: Params) {
     const [loading, setLoading] = useState<boolean>(false);
     const navigator = useNavigation<NativeStackHeaderProps['navigation']>();
 
+    const sendRequest = useCallback(
+        async <T>(variant: PageVariant) => {
+            try {
+                setLoading(true);
+
+                const response = await fetch(`${API_URL}/${variant}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                const data: Response<T> = await response.json();
+
+                if (!response.ok) return Alert.alert('Ошибка', data.error);
+            } catch (err) {
+                // Alert.alert('Ошибка', 'Не удалось выполнить вход');
+            } finally {
+                setLoading(false);
+            }
+        },
+        [name, email, password]
+    );
+
     async function loginUser() {
-        try {
-            setLoading(true);
-
-            const response = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password }),
-            });
-
-            const data: Response = await response.json();
-
-            if (!response.ok) return Alert.alert('Ошибка', data.error);
-        } catch (err) {
-            Alert.alert('Ошибка', 'Не удалось выполнить вход');
-        } finally {
-            setLoading(false);
-        }
+        await sendRequest('login');
     }
 
     const authHandler = useCallback(() => {
