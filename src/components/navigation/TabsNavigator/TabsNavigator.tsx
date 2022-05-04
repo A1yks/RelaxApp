@@ -1,13 +1,15 @@
+import Recommendations from '@components/pages/Recommendations';
+import UserGuide from '@components/pages/UserGuide';
+import Text from '@components/ui/Text';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React, { FC } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import icon from '../../../utils/icon';
 import Main from '../../pages/Main';
 import Profile from '../../pages/Profile';
-import Header from '../../ui/Header';
-import { TabScreens } from './types';
+import { TabScreens, TabsNavigatorParamList } from './types';
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<TabsNavigatorParamList>();
 
 const TabsNavigator: FC = () => {
     return (
@@ -17,7 +19,7 @@ const TabsNavigator: FC = () => {
                 tabBarStyle: styles.tabBar,
                 tabBarActiveTintColor: '#fff',
                 tabBarShowLabel: false,
-                header: (props) => <Header {...props} />,
+                headerShown: false,
             }}
         >
             <Tab.Screen name={TabScreens.MAIN} component={Main} options={{ tabBarIcon: icon('logo', { width: 29, height: 30 }) }} />
@@ -26,7 +28,6 @@ const TabsNavigator: FC = () => {
                 component={Profile}
                 options={{
                     tabBarIcon: icon('profile', { width: 19, height: 25 }),
-                    headerRight: () => <Text style={styles.profileHeaderRight}>exit</Text>,
                 }}
             />
         </Tab.Navigator>
@@ -38,11 +39,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#253334',
         borderTopWidth: 0,
         height: 80,
-    },
-    profileHeaderRight: {
-        color: '#fff',
-        fontSize: 15,
-        fontWeight: '500',
     },
 });
 

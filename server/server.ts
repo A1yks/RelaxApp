@@ -4,11 +4,13 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
+import path from 'path';
 
 dotenv.config({ path: '.env' });
 
 const app = express();
 
+app.use('/media', express.static(path.join(__dirname, './media')));
 app.use(express.json());
 app.use(cors());
 

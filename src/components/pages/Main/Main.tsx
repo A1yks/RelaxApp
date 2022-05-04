@@ -1,33 +1,42 @@
-import { TabScreens } from '@components/navigation/TabsNavigator/types';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackHeaderProps } from '@react-navigation/native-stack';
+import { useUserContext } from 'context/UserContext';
 import React, { FC } from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import Block from './Block';
+import Block from '@components/ui/Block';
 import FeelButtons from './FeelButtons';
+import Text from '@components/ui/Text';
+import useOpenPage from 'hooks/useOpenPage';
+import { StackPages } from '@components/navigation/StackNavigator/types';
+import { TabScreens } from '@components/navigation/TabsNavigator/types';
 
 const Main: FC = () => {
-    const navigator = useNavigation<NativeStackHeaderProps['navigation']>();
-
-    useEffect(() => {
-        // navigator.reset({ index: 0, routes: [{ name: TabScreens.MAIN }] });
-    });
+    const { name } = useUserContext();
+    const openPage = useOpenPage();
 
     return (
         <ScrollView style={styles.container}>
             <View>
                 <View style={styles.welcomeBackTextWrapper}>
                     <Text style={[styles.text, styles.welcomeBackText]}>С возвращением, </Text>
-                    <Text style={[styles.text, styles.welcomeBackText]}>Эмиль!</Text>
+                    <Text style={[styles.text, styles.welcomeBackText]}>{name}</Text>
                 </View>
                 <Text style={[styles.text, styles.questionText]}>Каким ты ощущаешь себя сегодня?</Text>
             </View>
             <FeelButtons />
             <View style={styles.blocksContainer}>
-                <Block title="Заголовок блока" description="Описание" image={require('@images/meditation.png')} />
-                <Block title="Заголовок блока" description="Описание" image={require('@images/cardio.png')} style={styles.blockWithMargin} />
+                <Block
+                    title="Гороскоп"
+                    description="Узнай свой гороскоп на сегодня"
+                    image={require('@images/cardio.png')}
+                    onButtonPress={openPage(StackPages.HOROSCOPE)}
+                />
+                <Block
+                    title="Руководство пользователя"
+                    description="Поможет разобраться, как работает приложение"
+                    image={require('@images/meditation.png')}
+                    style={styles.blockWithMargin}
+                    onButtonPress={openPage(StackPages.USER_GUIDE)}
+                />
             </View>
         </ScrollView>
     );
@@ -49,6 +58,7 @@ const styles = StyleSheet.create({
     welcomeBackTextWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
+        flexWrap: 'wrap',
     },
     questionText: {
         opacity: 0.7,

@@ -1,4 +1,3 @@
-export interface Response<T = any> {
-    error?: string;
-    data?: T;
+export interface Params {
+    isRegister: boolean;
 }

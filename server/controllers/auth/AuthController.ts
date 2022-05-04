@@ -8,17 +8,17 @@ class AuthController {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ error: 'Указаны не все данные' });
+            return res.status(400).json({ error: 'Заполнены не все поля' });
         }
 
         try {
-            const result = await AuthService.login(email, password);
+            const result = await AuthService.login(email.toLowerCase(), password);
 
             if (isServiceError(result)) {
                 return res.status(result.status).json({ error: result.error });
             }
 
-            res.status(200).json({ data: { token: result } });
+            res.status(200).json({ data: result });
         } catch (err) {
             res.status(500).json({ error: 'Неизвестная ошибка' });
         }
@@ -28,7 +28,7 @@ class AuthController {
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
-            return res.status(400).json({ error: 'Указаны не все данные' });
+            return res.status(400).json({ error: 'Заполнены не все поля' });
         }
 
         if (password.length < 7) {
@@ -40,9 +40,13 @@ class AuthController {
         }
 
         try {
-            const token = await AuthService.register(name, email, password);
+            const result = await AuthService.register(name, email, password);
 
-            res.status(201).json({ data: { token } });
+            if (isServiceError(result)) {
+                return res.status(result.status).json({ error: result.error });
+            }
+
+            res.status(201).json({ data: result });
         } catch (err) {
             res.status(500).json({ error: 'Неизвестная ошибка' });
         }

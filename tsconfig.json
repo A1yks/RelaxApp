@@ -17,7 +17,7 @@
         "baseUrl": "./src",
         "paths": {
             "@components/*": ["./components/*"],
-            "@images/*": ["./images/*"]
+            "@images/*": ["./assets/images/*"]
         }
     },
     "include": ["environment.d.ts", "./src/**/*"],

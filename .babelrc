@@ -6,7 +6,7 @@
             {
                 "extensions": [".js", ".jsx", ".ts", ".tsx", ".android.js", ".android.tsx", ".ios.js", ".ios.tsx"],
                 "alias": {
-                    "@images": "./src/images",
+                    "@images": "./src/assets/images",
                     "@components": "./src/components"
                 },
                 "root": ["./src"]
@@ -24,6 +24,7 @@
                 "allowUndefined": true,
                 "verbose": false
             }
-        ]
+        ],
+        "react-native-reanimated/plugin"
     ]
 }

@@ -1,20 +1,35 @@
 import React, { FC } from 'react';
 import VectorDrawable from '@klarna/react-native-vector-drawable';
-import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Image, StyleSheet, TouchableNativeFeedback, View } from 'react-native';
 import { feelVariants } from '../';
+import Text from '@components/ui/Text';
+import useOpenPage from 'hooks/useOpenPage';
+import { RootStackParamList, StackPages } from '@components/navigation/StackNavigator/types';
+import advices from 'data/advices.json';
 
 const FeelButtons: FC = () => {
+    const openPage = useOpenPage();
+
     return (
         <View style={styles.feelVariantsWrapper}>
             {feelVariants.map(({ title, resourceName, isPng }, i) => (
                 <View style={styles.feelVariant} key={i}>
-                    <View style={[styles.feelVariantImageWrapper]}>
-                        {isPng ? (
-                            <Image source={{ uri: resourceName }} style={styles.feelVariantImage} />
-                        ) : (
-                            <VectorDrawable resourceName={resourceName} style={styles.feelVariantImage} />
-                        )}
-                    </View>
+                    <TouchableNativeFeedback
+                        onPress={openPage<RootStackParamList['recommendations']>(StackPages.RECOMMENDATIONS, {
+                            params: {
+                                title: `Если ты чувствуешь себя ${title.toLowerCase()}`,
+                                content: advices[resourceName as keyof typeof advices],
+                            },
+                        })}
+                    >
+                        <View style={[styles.feelVariantImageWrapper]}>
+                            {isPng ? (
+                                <Image source={{ uri: resourceName }} style={styles.feelVariantImage} />
+                            ) : (
+                                <VectorDrawable resourceName={resourceName} style={styles.feelVariantImage} />
+                            )}
+                        </View>
+                    </TouchableNativeFeedback>
                     <Text style={[styles.text, styles.feelVariantTitle]}>{title}</Text>
                 </View>
             ))}
@@ -50,7 +65,7 @@ const styles = StyleSheet.create({
         marginRight: 26,
     },
     feelVariantTitle: {
-        fontSize: 10,
+        fontSize: 11,
         marginLeft: -26,
         marginTop: 5,
     },

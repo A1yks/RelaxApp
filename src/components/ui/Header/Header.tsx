@@ -1,29 +1,63 @@
-import { StackPages } from '@components/navigation/StackNavigator/types';
 import { TabScreens } from '@components/navigation/TabsNavigator/types';
 import VectorDrawable from '@klarna/react-native-vector-drawable';
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { DrawerHeaderProps } from '@react-navigation/drawer';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { useUserContext } from 'context/UserContext';
 import useOpenPage from 'hooks/useOpenPage';
-import React, { FC } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { FC, useCallback } from 'react';
+import { Alert, Image, Pressable, StyleSheet, TouchableNativeFeedback, View } from 'react-native';
+import Text from '../Text';
 
-const Header: FC<BottomTabHeaderProps> = (props) => {
-    const { options } = props;
+const Header: FC<DrawerHeaderProps> = (props) => {
+    const { navigation, route } = props;
+    const { setSignedIn } = useUserContext();
     const openPage = useOpenPage();
+
+    const logout = useCallback(async () => {
+        Alert.alert('Подтвердите действие', 'Вы уверены, что хотите выйти?', [
+            { text: 'Нет', style: 'cancel' },
+            {
+                text: 'Да',
+                async onPress() {
+                    await Promise.all([AsyncStorage.removeItem('email'), AsyncStorage.removeItem('token')]);
+
+                    setSignedIn(false);
+                },
+            },
+        ]);
+    }, [setSignedIn]);
+
+    const getRightHeaderButton = useCallback(() => {
+        let childRouteName = getFocusedRouteNameFromRoute(route);
+
+        if (childRouteName === TabScreens.PROFILE)
+            return (
+                <Pressable onPress={logout}>
+                    <Text style={styles.profileHeaderRight}>Выйти</Text>
+                </Pressable>
+            );
+
+        return (
+            <Pressable style={styles.profileIconWrapper} onPress={openPage(TabScreens.PROFILE)}>
+                <Image source={require('@images/profile.png')} style={styles.profileIcon} />
+            </Pressable>
+        );
+    }, [route, openPage, logout]);
 
     return (
         <View style={styles.container}>
             <View style={styles.content}>
-                <Pressable>
-                    <VectorDrawable resourceName="menu" style={styles.menuIcon} />
-                </Pressable>
+                <TouchableNativeFeedback
+                    onPress={navigation.openDrawer}
+                    background={TouchableNativeFeedback.Ripple('rgba(255, 255, 255, 0.1)', true, 25)}
+                >
+                    <View>
+                        <VectorDrawable resourceName="menu" style={styles.menuIcon} />
+                    </View>
+                </TouchableNativeFeedback>
                 <VectorDrawable resourceName="logo" style={styles.logoIcon} />
-                {options.headerRight ? (
-                    <Pressable onPress={openPage(StackPages.ONBOARDING, { replace: true })}>{options.headerRight({})}</Pressable>
-                ) : (
-                    <Pressable style={styles.profileIconWrapper} onPress={openPage(TabScreens.PROFILE)}>
-                        <Image source={require('@images/profile.png')} style={styles.profileIcon} />
-                    </Pressable>
-                )}
+                {getRightHeaderButton()}
             </View>
         </View>
     );
@@ -62,6 +96,11 @@ const styles = StyleSheet.create({
     profileIconWrapper: {
         width: 35,
         height: 35,
+    },
+    profileHeaderRight: {
+        color: '#fff',
+        fontSize: 15,
+        fontWeight: '500',
     },
 });
 

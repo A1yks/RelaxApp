@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import User from '../../models/User';
-import { Token } from './types';
+import User, { User as UserType } from '../../models/User';
+import { ClientResponse } from './types';
 
 class AuthService {
-    async login(email: string, password: string): Promise<Token | Services.Error> {
-        const user = await User.findOne({ email });
+    async login(email: string, password: string): Promise<ClientResponse | Service.Error> {
+        const user = await User.findOne({ email }).lean();
 
-        if (!user) return { status: 400, error: 'Пользователь с таким email не существует' };
+        if (!user) return { status: 400, error: 'Пользователя с таким email не существует' };
 
         const passwordsMatch = await bcrypt.compare(password, user.password);
 
@@ -15,10 +15,16 @@ class AuthService {
 
         const token = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET, { expiresIn: '7d' });
 
-        return token;
+        delete (user as Partial<UserType>).password;
+
+        return { user, token };
     }
 
-    async register(name: string, email: string, password: string): Promise<Token> {
+    async register(name: string, email: string, password: string): Promise<ClientResponse | Service.Error> {
+        const userExists = await User.exists({ email });
+
+        if (userExists) return { status: 409, error: 'Пользователь с таким email уже зарегистрирован' };
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = new User({ name, email, password: hashedPassword });
@@ -26,7 +32,9 @@ class AuthService {
 
         await user.save();
 
-        return token;
+        delete (user as Partial<UserType>).password;
+
+        return { user, token };
     }
 }
 

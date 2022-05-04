@@ -1,11 +1,11 @@
 import VectorDrawable from '@klarna/react-native-vector-drawable';
-import { NativeStackHeaderProps } from '@react-navigation/native-stack';
 import useOpenPage from 'hooks/useOpenPage';
 import React, { FC } from 'react';
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, StyleSheet, View } from 'react-native';
 import { StackPages } from '../../navigation/StackNavigator/types';
-import Button from '../../ui/Button';
-import TextLink from '../../ui/TextLink';
+import Button from '@components/ui/Button';
+import TextLink from '@components/ui/TextLink';
+import Text from '@components/ui/Text';
 
 const Onboarding: FC = () => {
     const openPage = useOpenPage();
@@ -37,7 +37,8 @@ const Onboarding: FC = () => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        height: '100%',
+        flex: 1,
+        justifyContent: 'space-around',
     },
     logo: {
         width: 191,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
     enterAccountWrapper: {
         paddingHorizontal: 27,
         marginTop: 100,
-        marginBottom: 30,
+        marginBottom: 50,
     },
     noAccountText: {
         fontSize: 18,

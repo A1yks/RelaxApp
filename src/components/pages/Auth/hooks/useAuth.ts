@@ -1,61 +1,78 @@
-import { StackPages } from '@components/navigation/StackNavigator/types';
-import { useNavigation } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import { API_URL } from '@env';
+import { API_URL, API_DEBUG_URL } from '@env';
 import { Alert } from 'react-native';
-import { Response } from './types';
+import { Params } from './types';
 import { PageVariant } from '../types';
-
-interface Params {
-    isRegister: boolean;
-}
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useUserContext } from 'context/UserContext';
+import { Response, UserData } from 'types';
 
 function useAuth({ isRegister }: Params) {
     const [name, setName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const navigator = useNavigation<NativeStackHeaderProps['navigation']>();
+    const { setUserData, setSignedIn, setToken } = useUserContext();
 
-    const sendRequest = useCallback(
-        async <T>(variant: PageVariant) => {
-            try {
-                setLoading(true);
-
-                const response = await fetch(`${API_URL}/${variant}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, password }),
-                });
-
-                const data: Response<T> = await response.json();
-
-                if (!response.ok) return Alert.alert('Ошибка', data.error);
-            } catch (err) {
-                // Alert.alert('Ошибка', 'Не удалось выполнить вход');
-            } finally {
-                setLoading(false);
-            }
+    const setContextUserData = useCallback(
+        async (data: UserData, token: string) => {
+            await Promise.all([AsyncStorage.setItem('email', data.email), AsyncStorage.setItem('token', token)]);
+            setUserData(data);
+            setToken(token);
+            setSignedIn(true);
         },
-        [name, email, password]
+        [setUserData, setToken, setSignedIn]
     );
 
-    async function loginUser() {
-        await sendRequest('login');
+    async function sendRequest(variant: PageVariant, successText?: string) {
+        try {
+            setLoading(true);
+
+            const response = await fetch(`${API_URL}/auth/${variant}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password }),
+            });
+            const result: Response<{ user: UserData; token: string }> = await response.json();
+
+            if (result.error) {
+                throw new Error(result.error);
+            } else {
+                setContextUserData(result.data.user, result.data.token);
+            }
+
+            if (successText) Alert.alert('Успех', successText);
+        } catch (err) {
+            if (err instanceof Error) {
+                Alert.alert('Ошибка', err.message);
+            }
+
+            setLoading(false);
+
+            return false;
+        }
+
+        return true;
     }
 
-    const authHandler = useCallback(() => {
-        if (!isRegister) {
-            navigator.reset({ index: 0, routes: [{ name: StackPages.APP }] });
-        }
-    }, [navigator, isRegister]);
+    function loginUser() {
+        sendRequest('login');
+    }
+
+    function registerUser() {
+        sendRequest('register', 'Вы успешно зарегистрировались');
+    }
+
+    function authHandler() {
+        if (isRegister) registerUser();
+        else loginUser();
+    }
 
     const nameChangeHandler = useCallback((name: string) => setName(name), []);
     const emailChangeHandler = useCallback((email: string) => setEmail(email), []);
     const passwordChangeHandler = useCallback((password: string) => setPassword(password), []);
 
-    return { authHandler, nameChangeHandler, emailChangeHandler, passwordChangeHandler, loading };
+    return { name, email, password, authHandler, nameChangeHandler, emailChangeHandler, passwordChangeHandler, loading };
 }
 
 export default useAuth;

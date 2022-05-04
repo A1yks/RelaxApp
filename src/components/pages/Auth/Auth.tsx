@@ -1,6 +1,6 @@
 import VectorDrawable from '@klarna/react-native-vector-drawable';
 import React, { FC } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { pageTexts } from './';
 import useOpenPage from '../../../hooks/useOpenPage';
 import { StackPages } from '../../navigation/StackNavigator/types';
@@ -8,6 +8,7 @@ import Button from '../../ui/Button';
 import TextLink from '../../ui/TextLink';
 import { PageVariant } from './types';
 import useAuth from './hooks/useAuth';
+import Text from '@components/ui/Text';
 
 interface Props {
     variant: PageVariant;
@@ -17,7 +18,9 @@ const Auth: FC<Props> = (props) => {
     const texts = pageTexts[props.variant];
     const isRegisterPage = props.variant === 'register';
     const openPage = useOpenPage();
-    const { authHandler, emailChangeHandler, nameChangeHandler, passwordChangeHandler, loading } = useAuth({ isRegister: isRegisterPage });
+    const { name, email, password, authHandler, emailChangeHandler, nameChangeHandler, passwordChangeHandler, loading } = useAuth({
+        isRegister: isRegisterPage,
+    });
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
@@ -32,6 +35,7 @@ const Auth: FC<Props> = (props) => {
                             placeholder="Имя"
                             textContentType="name"
                             onChangeText={nameChangeHandler}
+                            value={name}
                         />
                     )}
                     <TextInput
@@ -40,6 +44,7 @@ const Auth: FC<Props> = (props) => {
                         placeholder="Email адрес"
                         textContentType="emailAddress"
                         onChangeText={emailChangeHandler}
+                        value={email}
                     />
                     <TextInput
                         placeholderTextColor="#BEC2C2"
@@ -49,15 +54,18 @@ const Auth: FC<Props> = (props) => {
                         autoComplete={isRegisterPage ? 'password-new' : 'password'}
                         secureTextEntry
                         onChangeText={passwordChangeHandler}
+                        value={password}
                     />
                 </View>
                 <View style={styles.buttonWrapper}>
-                    <Button onPress={authHandler}>{texts.buttonText}</Button>
+                    <Button onPress={authHandler} loading={loading} style={styles.button}>
+                        {texts.buttonText}
+                    </Button>
                     <View style={styles.bottomTextWrapper}>
                         <Text style={[styles.text, styles.bottomText]}>{texts.bottomText} </Text>
                         <TextLink
                             style={[styles.text, styles.pressableText]}
-                            onPress={openPage(isRegisterPage ? StackPages.LOGIN : StackPages.REGISTER)}
+                            onPress={openPage(isRegisterPage ? StackPages.LOGIN : StackPages.REGISTER, { replace: true })}
                         >
                             {texts.pressableText}
                         </TextLink>
@@ -127,6 +135,9 @@ const styles = StyleSheet.create({
         left: 0,
         width: '100%',
         zIndex: -1,
+    },
+    button: {
+        height: 65,
     },
 });
 

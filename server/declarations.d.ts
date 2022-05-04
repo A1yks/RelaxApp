@@ -9,12 +9,13 @@ declare global {
 
         export interface Request<Body = any, Params = any> extends express.Request<Params> {
             body: Body;
+            userId?: string;
         }
 
         export interface Response<T = any> extends express.Response<ResponseBody<T>> {}
     }
 
-    namespace Services {
+    namespace Service {
         export interface Error {
             status: number;
             error: string;

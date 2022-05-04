@@ -1,3 +1,3 @@
-export function isServiceError(res: Services.Error | unknown): res is Services.Error {
-    return (res as Services.Error).error !== undefined;
+export function isServiceError(res: Service.Error | unknown): res is Service.Error {
+    return (res as Service.Error).error !== undefined;
 }

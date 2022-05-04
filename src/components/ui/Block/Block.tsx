@@ -1,13 +1,15 @@
 import Button from '@components/ui/Button';
 import React, { FC } from 'react';
-import { ImageRequireSource, StyleProp, Text } from 'react-native';
+import { ImageRequireSource, StyleProp } from 'react-native';
 import { Image, StyleSheet, View, ViewStyle } from 'react-native';
+import Text from '@components/ui/Text';
 
 interface Props {
     title: string;
     description: string;
     image: ImageRequireSource;
     style?: StyleProp<ViewStyle>;
+    onButtonPress?: () => void;
 }
 
 const Block: FC<Props> = (props) => {
@@ -15,8 +17,8 @@ const Block: FC<Props> = (props) => {
         <View style={[styles.container, props.style]}>
             <View>
                 <Text style={[styles.text, styles.title]}>{props.title}</Text>
-                <Text style={styles.text}>{props.description}</Text>
-                <Button style={styles.button} textStyle={[styles.text, styles.buttonText]}>
+                <Text style={[styles.text, styles.description]}>{props.description}</Text>
+                <Button style={styles.button} textStyle={[styles.text, styles.buttonText]} onPress={props.onButtonPress}>
                     Подробнее
                 </Button>
             </View>
@@ -52,9 +54,14 @@ const styles = StyleSheet.create({
         width: 138,
         backgroundColor: '#253334',
         marginTop: 16,
+        height: 'auto',
     },
     buttonText: {
         color: '#fff',
+        fontSize: 16,
+    },
+    description: {
+        maxWidth: '80%',
     },
 });
 
