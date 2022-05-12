@@ -7,7 +7,6 @@ import FeelButtons from './FeelButtons';
 import Text from '@components/ui/Text';
 import useOpenPage from 'hooks/useOpenPage';
 import { StackPages } from '@components/navigation/StackNavigator/types';
-import { TabScreens } from '@components/navigation/TabsNavigator/types';
 
 const Main: FC = () => {
     const { name } = useUserContext();
